@@ -6,6 +6,9 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+ENV TZ=Europe/Prague
+ENV LC_ALL=cs_CZ.UTF-8
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS with-node
 RUN apt-get update
 RUN apt-get install curl
@@ -15,9 +18,16 @@ RUN apt-get -y install nodejs
 FROM with-node AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["InvalidDocuments.Server/InvalidDocuments.Server.csproj", "InvalidDocuments.Server/"]
-COPY ["invaliddocuments.client/invaliddocuments.client.esproj", "invaliddocuments.client/"]
+COPY . .
+
 RUN dotnet restore "./InvalidDocuments.Server/InvalidDocuments.Server.csproj"
+
+# running unit tests
+RUN LANG=cs_CZ.UTF-8 dotnet test InvalidDocuments.UnitTests --verbosity quiet
+
+# running integration tests
+RUN LANG=cs_CZ.UTF-8 dotnet test InvalidDocuments.IntegrationTests --verbosity quiet
+
 COPY . .
 WORKDIR "/src/InvalidDocuments.Server"
 RUN dotnet build "./InvalidDocuments.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
