@@ -20,7 +20,9 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "invaliddocuments.client", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvalidDocuments.Server", "InvalidDocuments.Server\InvalidDocuments.Server.csproj", "{FF58CD91-D22F-4CC5-988B-CFA055DAB0B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvalidDocuments.UnitTests", "InvalidDocuments.UnitTests\InvalidDocuments.UnitTests.csproj", "{1AD2E012-FA14-4AA1-BA62-60D93A7EC391}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvalidDocuments.UnitTests", "InvalidDocuments.UnitTests\InvalidDocuments.UnitTests.csproj", "{1AD2E012-FA14-4AA1-BA62-60D93A7EC391}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvalidDocuments.IntegrationTests", "InvalidDocuments.IntegrationTests\InvalidDocuments.IntegrationTests.csproj", "{6E7BF8F9-6469-499A-B727-CA5E571B3137}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +44,10 @@ Global
 		{1AD2E012-FA14-4AA1-BA62-60D93A7EC391}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AD2E012-FA14-4AA1-BA62-60D93A7EC391}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AD2E012-FA14-4AA1-BA62-60D93A7EC391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E7BF8F9-6469-499A-B727-CA5E571B3137}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E7BF8F9-6469-499A-B727-CA5E571B3137}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E7BF8F9-6469-499A-B727-CA5E571B3137}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E7BF8F9-6469-499A-B727-CA5E571B3137}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

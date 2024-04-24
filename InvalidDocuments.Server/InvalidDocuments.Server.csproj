@@ -33,5 +33,6 @@
 
 	<ItemGroup>		
 		<InternalsVisibleTo Include="InvalidDocuments.UnitTests" />
+		<InternalsVisibleTo Include="InvalidDocuments.IntegrationTests" />
 	</ItemGroup>
 </Project>
