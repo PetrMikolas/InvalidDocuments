@@ -1,0 +1,14 @@
+version: "3" 
+
+services:  
+  invaliddocuments:    
+    container_name: invaliddocuments
+    image: dockerhub.petrmikolas.cz/invaliddocumentsserver:latest   
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Production    
+     - LANG=C.UTF-8   
+    restart: unless-stopped      
+    ports:
+      - 8600:8080  
+      - 8601:8081   
+    network_mode: bridge  
