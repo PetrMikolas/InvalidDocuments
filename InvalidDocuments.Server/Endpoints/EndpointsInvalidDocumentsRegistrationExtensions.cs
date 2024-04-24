@@ -5,8 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InvalidDocuments.Server.Endpoints;
 
+/// <summary>
+/// Provides extension methods for registering endpoints related to invalid documents.
+/// </summary>
 public static class EndpointsInvalidDocumentsRegistrationExtensions
 {
+    /// <summary>
+    /// Extension method to map endpoints related to invalid documents.
+    /// </summary>
+    /// <param name="app">The <see cref="WebApplication"/> instance.</param>
+    /// <returns>The modified <see cref="WebApplication"/> instance with mapped endpoints.</returns>
     public static WebApplication MapEndpointsInvalidDocuments(this WebApplication app)
     {
         app.MapGet("documents", async ([FromServices] IInvalidDocumentService invalidDocumentService, [FromQuery] string number, CancellationToken cancellationToken) =>
@@ -28,9 +36,9 @@ public static class EndpointsInvalidDocumentsRegistrationExtensions
                 return Results.StatusCode(StatusCodes.Status500InternalServerError);
             }
         })
-        .WithTags("Documents")
-        .WithName("GetDocument")
-        .WithOpenApi(operation => new(operation) { Summary = "Get invalid document" })
+        .WithTags("InvalidDocuments")
+        .WithName("GetInvalidDocument")
+        .WithOpenApi(operation => new(operation) { Summary = "Get invalid document by number" })
         .Produces<InvalidDocumentDto>(StatusCodes.Status200OK)        
         .Produces(StatusCodes.Status400BadRequest)
         .Produces(StatusCodes.Status500InternalServerError);

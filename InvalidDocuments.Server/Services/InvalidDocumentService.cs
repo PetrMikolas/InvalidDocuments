@@ -52,6 +52,13 @@ public class InvalidDocumentService(HttpClient httpClient, IConfiguration config
         }
     }
 
+    /// <summary>
+    /// Retrieves information about an invalid document based on the document type asynchronously.
+    /// </summary>
+    /// <param name="number">The document number to retrieve information for.</param>
+    /// <param name="type">The document type.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An InvalidDocument object containing information about the document.</returns>
     private async Task<InvalidDocument> GetInvalidDocumentByDocumentType(string number, int type, CancellationToken cancellationToken)
     {
         var baseUrlApi = configuration["BaseUrlApiMvcr"];
