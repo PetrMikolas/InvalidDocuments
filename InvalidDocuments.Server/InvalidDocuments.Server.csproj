@@ -31,4 +31,7 @@
     </ProjectReference>
   </ItemGroup>
 
+	<ItemGroup>		
+		<InternalsVisibleTo Include="InvalidDocuments.UnitTests" />
+	</ItemGroup>
 </Project>

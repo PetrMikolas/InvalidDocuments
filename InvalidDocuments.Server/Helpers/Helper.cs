@@ -22,13 +22,13 @@ public static class Helper
 
         if (string.IsNullOrEmpty(number))
         {
-            error = $"Číslo dokladu nemůže být prázdné.";
+            error = "Číslo dokladu nemůže být prázdné.";
             return false;
         }
 
         if (number.Length > 10)
         {
-            error = $"Číslo dokladu může obsahovat max. 10 znaků. ";
+            error = "Číslo dokladu může obsahovat max. 10 znaků. ";
         }
 
         string pattern = @"^[a-zA-Z0-9]*$";
@@ -36,7 +36,7 @@ public static class Helper
 
         if (!isValid)
         {
-            error += $"Číslo dokladu obsahuje neplatné znaky.";
+            error += "Číslo dokladu obsahuje neplatné znaky.";
         }
 
         return error == string.Empty;
@@ -49,6 +49,8 @@ public static class Helper
     /// <returns>The input string without white spaces.</returns>
     public static string RemoveWhiteSpace(this string text)
     {
+        ArgumentNullException.ThrowIfNull(text);
+
         return Regex.Replace(text, @"\s+", "");
     }
 
@@ -116,7 +118,7 @@ public static class Helper
     /// </summary>
     /// <param name="type">The document type code.</param>
     /// <returns>The human-readable document type.</returns>
-    private static string GetDocumentType(string type)
+    internal static string GetDocumentType(string type)
     {
         ArgumentNullException.ThrowIfNull(type);
 
