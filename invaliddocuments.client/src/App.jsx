@@ -56,8 +56,16 @@ function App() {
     return (
         <div>
             <h2 id="tabelLabel">Naplatné doklady</h2>
-            <p>Vyhledávání dokladu v databázi neplatných dokladů MVČR</p>
-            <p>Zadejte číslo dokladu (pouze číslice a písmena bez diakritiky)</p>
+            <p style={{ marginBottom: '22px' }}>Vyhledávání dokladu v databázi neplatných dokladů MVČR</p>
+            <div style={{ textAlign: 'left' }}>
+                <div style={{ paddingLeft: '3px' }}>Databáze neplatných dokladů obsahuju údaje pouze o:</div>
+                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
+                    <li>občanských průkazech evidovaných jako ztracené nebo odcizené</li>
+                    <li>cestovních pasech evidovaných jako ztracené nebo odcizené</li>
+                    <li>zbrojních průkazech a licencích evidovaných jako ztracené nebo odcizené</li>
+                </ul>
+            </div>
+            <p style={{ marginTop: '22px' }}>Zadejte číslo dokladu (pouze číslice a písmena bez diakritiky)</p>
             <input type="text" maxLength="10" value={documentNumber} onChange={(e) => setDocumentNumber(e.target.value)} placeholder="Číslo dokladu" />
             <button onClick={handleButtonClick}>Vyhledat</button>
             {contents}
