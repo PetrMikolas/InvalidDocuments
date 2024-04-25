@@ -24,6 +24,7 @@ internal class HelperTests
     [Test]
     [TestCase("123456ABCD", true, "")]
     [TestCase("", false, "Číslo dokladu nemůže být prázdné.")]
+    [TestCase(null!, false, "Číslo dokladu nemůže být prázdné.")]
     [TestCase("123456789ABCD", false, "Číslo dokladu může obsahovat max. 10 znaků. ")]
     [TestCase("1234*56", false, "Číslo dokladu obsahuje neplatné znaky.")]
     public void IsValidDocumentNumber_Success(string number, bool expectedResult, string expectedError)
@@ -34,17 +35,6 @@ internal class HelperTests
         // Assert     
         isValid.Should().Be(expectedResult);
         error.Should().Be(expectedError);
-    }
-
-    [Test]
-    public void IsValidDocumentNumber_NumberIsNull_Success()
-    {
-        // Act + Assert
-        var isValid = Helper.IsValidDocumentNumber(null!, out string error);
-
-        // Assert     
-        isValid.Should().BeFalse();
-        error.Should().Be("Číslo dokladu nemůže být prázdné.");
     }
 
     [Test]
@@ -63,7 +53,7 @@ internal class HelperTests
     [Test]
     public void RemoveWhiteSpace_TextIsNull_ArgumentNullException()
     {
-        // Act + Assert
+        // Act 
         Action act = () => Helper.RemoveWhiteSpace(null!);
 
         // Assert
@@ -89,7 +79,7 @@ internal class HelperTests
     [Test]
     public void DeserializeXmlToObject_XmlIsNull_ArgumentNullException()
     {
-        // Act + Assert
+        // Act 
         Action act = () => Helper.DeserializeXmlToObject<InvalidDocument>(null!);
 
         // Assert
@@ -113,7 +103,7 @@ internal class HelperTests
     public void GetInvalidDocumentDto_Success()
     {
         // Arrange  
-        var invalidDocumentDto = new InvalidDocumentDto
+        var expectedDto = new InvalidDocumentDto
         {
             Number = "183579",
             Series = "AA81",
@@ -128,13 +118,13 @@ internal class HelperTests
         var dto = Helper.GetInvalidDocumentDto(_invalidDocument);
 
         // Assert     
-        dto.Should().BeEquivalentTo(invalidDocumentDto);
+        dto.Should().BeEquivalentTo(expectedDto);
     }
 
     [Test]
     public void GetInvalidDocumentDto_InvalidDocumentIsNull_ArgumentNullException()
     {
-        // Act + Assert
+        // Act 
         Action act = () => Helper.GetInvalidDocumentDto(null!);
 
         // Assert
@@ -160,7 +150,7 @@ internal class HelperTests
     [Test]
     public void GetDocumentType_TypeIsNull_ArgumentNullException()
     {
-        // Act + Assert
+        // Act 
         Action act = () => Helper.GetDocumentType(null!);
 
         // Assert
