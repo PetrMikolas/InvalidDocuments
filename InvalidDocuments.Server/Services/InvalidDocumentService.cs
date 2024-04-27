@@ -4,9 +4,15 @@ using InvalidDocuments.Server.Models;
 
 namespace InvalidDocuments.Server.Services;
 
-public class InvalidDocumentService(HttpClient httpClient, IConfiguration configuration, ILogger<InvalidDocumentService> logger) : IInvalidDocumentService
+/// <summary>
+/// Provides the service for retrieving information about an invalid document based on the <seealso cref="IInvalidDocumentService"/> interface.
+/// </summary>
+/// <param name="httpClient">The HttpClient instance for sending HTTP requests and receiving HTTP responses.</param>
+/// <param name="configuration">The IConfiguration instance for accessing application configuration.</param>
+/// <param name="logger">The ILogger instance for logging errors and information.</param>
+internal sealed class InvalidDocumentService(HttpClient httpClient, IConfiguration configuration, ILogger<InvalidDocumentService> logger) : IInvalidDocumentService
 {
-    public async Task<InvalidDocument> GetInvalidDocumentAsync(string documentNumber, CancellationToken cancellationToken)
+    public async Task<InvalidDocument> GetInvalidDocumentAsync(string documentNumber, CancellationToken cancellationToken = default)
     {
         var documentTypes = configuration.GetSection("DocumentTypes").Get<List<int>>();
 

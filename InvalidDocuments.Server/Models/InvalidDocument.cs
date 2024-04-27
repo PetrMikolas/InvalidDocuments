@@ -6,7 +6,7 @@ namespace InvalidDocuments.Server.Models;
 /// Represents a data model for an invalid document in the Invalid Documents application.
 /// </summary>
 [XmlRoot(ElementName = "doklady_neplatne")]
-public class InvalidDocument
+public sealed class InvalidDocument
 {
     /// <summary>
     /// Gets or sets the request details.
@@ -42,7 +42,7 @@ public class InvalidDocument
 /// <summary>
 /// Represents the request details.
 /// </summary>
-public class Request
+public sealed class Request
 {
     /// <summary>
     /// Gets or sets the type of the document.
@@ -66,7 +66,7 @@ public class Request
 /// <summary>
 /// Represents the response details.
 /// </summary>
-public class Response
+public sealed class Response
 {
     /// <summary>
     /// Gets or sets the date of the last update.
@@ -90,7 +90,7 @@ public class Response
 /// <summary>
 /// Represents the error details.
 /// </summary>
-public class Error
+public sealed class Error
 {
     /// <summary>
     /// Gets or sets whether the request is bad.

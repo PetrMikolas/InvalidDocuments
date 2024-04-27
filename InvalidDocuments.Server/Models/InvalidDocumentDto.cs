@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a data transfer object (DTO) for an invalid document.
 /// </summary>
-public class InvalidDocumentDto
+public sealed class InvalidDocumentDto
 {
     /// <summary>
     /// Gets or sets the document number.

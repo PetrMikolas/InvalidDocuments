@@ -28,8 +28,8 @@ public static class EndpointsInvalidDocumentsRegistrationExtensions
 
             try
             {             
-                var response = await invalidDocumentService.GetInvalidDocumentAsync(number, cancellationToken);
-                return Results.Ok(response.GetInvalidDocumentDto());
+                var invalidDocument = await invalidDocumentService.GetInvalidDocumentAsync(number, cancellationToken);
+                return Results.Ok(invalidDocument.GetInvalidDocumentDto());
             }
             catch (Exception)
             {
