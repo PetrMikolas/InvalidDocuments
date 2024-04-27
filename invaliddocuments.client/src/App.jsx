@@ -1,24 +1,34 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
     const [document, setDocument] = useState();
     const [documentNumber, setDocumentNumber] = useState("");
-    const [buttonClicked, setButtonClicked] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    useEffect(() => {
-        if (buttonClicked) {
-            setLoading(true);
-            populateDocumentData();
-        }
-    }, [buttonClicked]);
-
-    const handleButtonClick = () => {
-        setButtonClicked(true);
+    const handleButtonClick = async () => {
+        setLoading(true);
         setDocument(undefined);
+
+        try {
+            const response = await fetch(`documents?number=${documentNumber}`);
+            const data = await response.json();
+
+            if (response.status === 400) {
+                setErrorMessage(data);
+            } else if (response.status === 500) {
+                setErrorMessage("Neočekávaná chyba. O problému víme a pracujeme na nápravě.");
+            } else {
+                setDocument(data);
+                setDocumentNumber("");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            setErrorMessage("Nastala chyba při zpracování požadavku. Zkuste to prosím znovu.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const contents = loading
@@ -71,28 +81,6 @@ function App() {
             {contents}
         </div>
     );
-
-    async function populateDocumentData() {
-        try {
-            const response = await fetch(`documents?number=${documentNumber}`);
-            const data = await response.json();
-
-            if (response.status === 400) {
-                setErrorMessage(data);
-            } else if (response.status === 500) {
-                setErrorMessage("Neočekávaná chyba. O problému víme a pracujeme na nápravě.");
-            } else {
-                setDocument(data);
-                setDocumentNumber("");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            setErrorMessage("Nastala chyba při zpracování požadavku. Zkuste to prosím znovu.");
-        } finally {
-            setLoading(false);
-            setButtonClicked(false);
-        }
-    }
 }
 
 export default App;
