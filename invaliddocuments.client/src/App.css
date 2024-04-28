@@ -24,3 +24,31 @@ th, td {
     justify-content: center;
     margin-top: 20px;
 }
+
+button {
+    border-radius: 4px;
+    border: 1px solid transparent;
+    padding: 6px 14px;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: lightgreen;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    margin-left: 8px;
+}
+
+    button:hover {
+        border-color: #646cff;
+    }
+
+    button:focus,
+    button:focus-visible {
+        outline: 4px auto -webkit-focus-ring-color;
+    }
+
+input {
+    padding: 6px 12px;
+    border: 1px solid;
+    border-radius: 4px;
+    width: 90px;
+}
