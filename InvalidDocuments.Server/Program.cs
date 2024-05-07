@@ -17,7 +17,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHttpClient<IInvalidDocumentService, InvalidDocumentService>();
+builder.Services.AddHttpClient<IDocumentValidateService, DocumentValidateService>();
 
 var app = builder.Build();
 
@@ -35,6 +35,6 @@ app.UseHttpsRedirection();
 
 app.MapFallbackToFile("/index.html");
 
-app.MapEndpointsInvalidDocuments();
+app.MapEndpointsValidations();
 
 app.Run();

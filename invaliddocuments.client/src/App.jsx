@@ -2,17 +2,17 @@ import { useState } from 'react';
 import './App.css';
 
 function App() {
-    const [document, setDocument] = useState();
+    const [documentValidationResult, setDocumentValidationResult] = useState();
     const [documentNumber, setDocumentNumber] = useState("");
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleButtonClick = async () => {
         setLoading(true);
-        setDocument(undefined);
+        setDocumentValidationResult(undefined);
 
         try {
-            const response = await fetch(`documents?number=${documentNumber}`);
+            const response = await fetch(`validations?number=${documentNumber}`);
             const data = await response.json();
 
             if (response.status === 400) {
@@ -20,7 +20,7 @@ function App() {
             } else if (response.status === 500) {
                 setErrorMessage("Neočekávaná chyba. O problému víme a pracujeme na nápravě.");
             } else {
-                setDocument(data);
+                setDocumentValidationResult(data);
                 setDocumentNumber("");
             }
         } catch (error) {
@@ -33,11 +33,11 @@ function App() {
 
     const contents = loading
         ? <p><em>Vyhledávání...</em></p>
-        : document === undefined
+        : documentValidationResult === undefined
             ? <p style={{ color: 'red' }}>{errorMessage}</p>
-            : document.isRegistered
+            : documentValidationResult.isRegistered
                 ? <>
-                    <p>Doklad s číslem <b>{document.number} byl nalezen</b> v databázi neplatných dokladů.</p>
+                    <p>Doklad s číslem <b>{documentValidationResult.number} byl nalezen</b> v databázi neplatných dokladů.</p>
                     <div className="table-container">
                         <table className="table table-striped" aria-labelledby="tabelLabel">
                             <thead>
@@ -50,18 +50,18 @@ function App() {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{document.number}</td>
-                                    <td>{document.series}</td>
-                                    <td>{document.type}</td>
-                                    <td>{document.registeredFrom}</td>
+                                    <td>{documentValidationResult.number}</td>
+                                    <td>{documentValidationResult.series}</td>
+                                    <td>{documentValidationResult.type}</td>
+                                    <td>{documentValidationResult.registeredFrom}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </>
-                : document.error !== ""
-                    ? <p style={{ color: 'red' }}>{document.error}</p>
-                    : <p>Doklad s číslem <b>{document.number} nebyl nalezen</b> v databázi neplatných dokladů.</p>;
+                : documentValidationResult.error !== ""
+                    ? <p style={{ color: 'red' }}>{documentValidationResult.error}</p>
+                    : <p>Doklad s číslem <b>{documentValidationResult.number} nebyl nalezen</b> v databázi neplatných dokladů.</p>;
 
     return (
         <div>

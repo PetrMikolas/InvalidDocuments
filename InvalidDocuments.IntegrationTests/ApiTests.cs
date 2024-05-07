@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using InvalidDocuments.Server.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Snapshooter.NUnit;
 using System.Net;
 using System.Text.Json;
+using static InvalidDocuments.Server.Endpoints.EndpointsValidationsRegistrationExtensions;
 
 namespace InvalidDocuments.IntegrationTests;
 
@@ -29,7 +29,7 @@ internal class ApiTests
     }
 
     [Test]
-    public async Task GetDocuments_DocumentIsRegistred_Success()
+    public async Task GetDocumentValidation_DocumentIsInvalid_Success()
     {
         // Arrange 
         var number = "183579AA81";
@@ -53,19 +53,19 @@ internal class ApiTests
 
         await server.StartAsync();
 
-        var expectedDto = new InvalidDocumentDto
-        {
-            Number = "183579",
-            Series = "AA81",
-            Type = "občanský průkaz",
-            IsRegistered = true,
-            RegisteredFrom = "15.4.2024",
-            BadRequest = false,
-            Error = string.Empty
-        };
+        var expectedDto = new DocumentValidationDto
+        (
+            "183579",
+            "AA81",
+            "občanský průkaz",
+            true,
+            "15.4.2024",
+            false,
+            string.Empty
+        );
 
         // Act
-        var response = await _httpClient.GetAsync($"documents?number={number}");
+        var response = await _httpClient.GetAsync($"validations?number={number}");
 
         // Assert
         response.Should().NotBeNull();
@@ -75,7 +75,7 @@ internal class ApiTests
         content.Should().NotBeNull();
 
         JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
-        var dto = JsonSerializer.Deserialize<InvalidDocumentDto>(content, options)!;
+        var dto = JsonSerializer.Deserialize<DocumentValidationDto>(content, options)!;
         dto.Should().NotBeNull();
         dto.Should().BeEquivalentTo(expectedDto);
         Snapshot.Match(dto);
@@ -84,7 +84,7 @@ internal class ApiTests
     }
 
     [Test]
-    public async Task GetDocuments_DocumentIsNotRegistred_Success()
+    public async Task GetDocumentValidation_DocumentIsValid_Success()
     {
         // Arrange 
         var number = "123456ABCD";
@@ -107,20 +107,20 @@ internal class ApiTests
             .Build();
 
         await server.StartAsync();
-
-        var expectedDto = new InvalidDocumentDto
-        {
-            Number = number,
-            Series = string.Empty,
-            Type = string.Empty,
-            IsRegistered = false,
-            RegisteredFrom = string.Empty,
-            BadRequest = false,
-            Error = string.Empty
-        };
+    
+        var expectedDto = new DocumentValidationDto
+        (
+            number,
+            string.Empty,
+            string.Empty,
+            false,
+            string.Empty,
+            false,
+            string.Empty
+        );
 
         // Act
-        var response = await _httpClient.GetAsync($"documents?number={number}");
+        var response = await _httpClient.GetAsync($"validations?number={number}");
 
         // Assert
         response.Should().NotBeNull();
@@ -130,7 +130,7 @@ internal class ApiTests
         content.Should().NotBeNull();
 
         JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
-        var dto = JsonSerializer.Deserialize<InvalidDocumentDto>(content, options)!;
+        var dto = JsonSerializer.Deserialize<DocumentValidationDto>(content, options)!;
         dto.Should().NotBeNull();
         dto.Should().BeEquivalentTo(expectedDto);
         Snapshot.Match(dto);
@@ -143,10 +143,10 @@ internal class ApiTests
     [TestCase(null!, HttpStatusCode.BadRequest)]
     [TestCase("12345678ABCD", HttpStatusCode.BadRequest)]
     [TestCase("123456*AB", HttpStatusCode.BadRequest)]
-    public async Task GetDocuments_BadRequest(string number, HttpStatusCode expectedStatusCode)
+    public async Task GetDocumentValidation_BadRequest(string number, HttpStatusCode expectedStatusCode)
     {
         // Act
-        var response = await _httpClient.GetAsync($"documents?number={number}");
+        var response = await _httpClient.GetAsync($"validations?number={number}");
 
         // Assert
         response.Should().NotBeNull();

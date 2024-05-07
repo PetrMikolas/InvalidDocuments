@@ -43,7 +43,7 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/documents': {
+            '^/validations': {
                 target,
                 secure: false
             }

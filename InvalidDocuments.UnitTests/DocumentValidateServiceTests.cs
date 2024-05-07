@@ -1,16 +1,23 @@
 ﻿using FluentAssertions;
-using InvalidDocuments.Server.Helpers;
-using InvalidDocuments.Server.Models;
+using InvalidDocuments.Server.Endpoints;
+using InvalidDocuments.Server.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using NUnit.Framework.Internal;
 
 namespace InvalidDocuments.UnitTests;
 
-internal class HelperTests
+internal class DocumentValidateServiceTests
 {
     private InvalidDocument _invalidDocument;
+    private DocumentValidateService _documentValidateService;
 
     [SetUp]
     public void Setup()
     {
+        ILogger<DocumentValidateService> logger = new NullLogger<DocumentValidateService>();
+        _documentValidateService = new DocumentValidateService(null!, null!, logger);
+
         _invalidDocument = new InvalidDocument
         {
             Request = new() { Number = "183579", Series = "AA81", Type = "OPs" },
@@ -30,7 +37,7 @@ internal class HelperTests
     public void IsValidDocumentNumber_Success(string number, bool expectedResult, string expectedError)
     {
         // Act
-        var isValid = Helper.IsValidDocumentNumber(number, out string error);
+        var isValid = EndpointsValidationsRegistrationExtensions.IsValidDocumentNumber(number, out string error);
 
         // Assert     
         isValid.Should().Be(expectedResult);
@@ -44,7 +51,7 @@ internal class HelperTests
         string text = " 1 2 3 4 A B C D ";
 
         // Act
-        var cleanedText = Helper.RemoveWhiteSpace(text);
+        var cleanedText = EndpointsValidationsRegistrationExtensions.RemoveWhiteSpace(text);
 
         // Assert     
         cleanedText.Should().Be("1234ABCD");
@@ -54,14 +61,14 @@ internal class HelperTests
     public void RemoveWhiteSpace_TextIsNull_ArgumentNullException()
     {
         // Act 
-        Action act = () => Helper.RemoveWhiteSpace(null!);
+        Action act = () => EndpointsValidationsRegistrationExtensions.RemoveWhiteSpace(null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Test]
-    public void DeserializeXmlToObject_Success()
+    public void DeserializeXmlToInvalidDocument_Success()
     {
         // Arrange 
         string xml = "<doklady_neplatne posl_zmena=\"12.8.2010\" pristi_zmeny=\"\">" +
@@ -70,40 +77,40 @@ internal class HelperTests
                      "</doklady_neplatne>";
 
         // Act
-        var deserializedDocument = Helper.DeserializeXmlToObject<InvalidDocument>(xml);
+        var deserializedDocument = _documentValidateService.DeserializeXmlToInvalidDocument(xml);
 
         // Assert     
         deserializedDocument.Should().BeEquivalentTo(_invalidDocument);
     }
 
     [Test]
-    public void DeserializeXmlToObject_XmlIsNull_ArgumentNullException()
+    public void DeserializeXmlToInvalidDocument_XmlIsNull_ArgumentNullException()
     {
         // Act 
-        Action act = () => Helper.DeserializeXmlToObject<InvalidDocument>(null!);
+        Action act = () => _documentValidateService.DeserializeXmlToInvalidDocument(null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Test]
-    public void DeserializeXmlToObject_XmlIsInvalid_InvalidOperationException()
+    public void DeserializeXmlToInvalidDocument_XmlIsInvalid_InvalidOperationException()
     {
         // Arrange 
-        string xml = "<invalid_xml />";
+        string xml = "<invalid_xml></invalid_xml>";
 
         // Act 
-        Action act = () => Helper.DeserializeXmlToObject<InvalidDocument>(xml);
+        Action act = () => _documentValidateService.DeserializeXmlToInvalidDocument(xml);
 
         // Assert
         act.Should().Throw<InvalidOperationException>();
     }
 
     [Test]
-    public void GetInvalidDocumentDto_Success()
+    public void MapInvalidDocumentToDocumentValidationResult_Success()
     {
         // Arrange  
-        var expectedDto = new InvalidDocumentDto
+        var expectedDto = new DocumentValidationResult
         {
             Number = "183579",
             Series = "AA81",
@@ -115,17 +122,17 @@ internal class HelperTests
         };
 
         // Act
-        var dto = Helper.GetInvalidDocumentDto(_invalidDocument);
+        var dto = _documentValidateService.MapInvalidDocumentToDocumentValidationResult(_invalidDocument);
 
         // Assert     
         dto.Should().BeEquivalentTo(expectedDto);
     }
 
     [Test]
-    public void GetInvalidDocumentDto_InvalidDocumentIsNull_ArgumentNullException()
+    public void MapInvalidDocumentToDocumentValidationResult_InvalidDocumentIsNull_ArgumentNullException()
     {
         // Act 
-        Action act = () => Helper.GetInvalidDocumentDto(null!);
+        Action act = () => _documentValidateService.MapInvalidDocumentToDocumentValidationResult(null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -141,7 +148,7 @@ internal class HelperTests
     public void GetDocumentType_Success(string input, string expectedOutput)
     {
         // Act
-        var type = Helper.GetDocumentType(input);
+        var type = _documentValidateService.GetDocumentType(input);
 
         // Assert     
         type.Should().Be(expectedOutput);
@@ -151,7 +158,7 @@ internal class HelperTests
     public void GetDocumentType_TypeIsNull_ArgumentNullException()
     {
         // Act 
-        Action act = () => Helper.GetDocumentType(null!);
+        Action act = () => _documentValidateService.GetDocumentType(null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
