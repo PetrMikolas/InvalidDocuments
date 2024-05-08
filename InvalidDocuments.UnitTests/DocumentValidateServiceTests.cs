@@ -88,7 +88,7 @@ internal class DocumentValidateServiceTests
 
     [Test]
     [TestCase("")]
-    [TestCase(null)]
+    [TestCase(null!)]
     public async Task ValidateDocumentAsync_DocumentNumberIsNullOrEmpty_Success(string number)
     {
         // Act
@@ -158,7 +158,7 @@ internal class DocumentValidateServiceTests
 
     [Test]
     [TestCase("")]
-    [TestCase(null)]
+    [TestCase(null!)]
     public async Task ValidateDocumentByDocumentTypeAsync_DocumentNumberNullOrEmpty_ThrowsArgumentException(string number)
     {
         // Act
