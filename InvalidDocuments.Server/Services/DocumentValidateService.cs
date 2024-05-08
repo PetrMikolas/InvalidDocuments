@@ -1,5 +1,4 @@
-﻿using InvalidDocuments.Server.Enums;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace InvalidDocuments.Server.Services;
 
@@ -14,19 +13,24 @@ internal sealed class DocumentValidateService(HttpClient httpClient, IConfigurat
 {
     public async Task<DocumentValidationResult> ValidateDocumentAsync(string documentNumber, CancellationToken cancellationToken = default)
     {
-        var documentTypes = configuration.GetSection("DocumentTypes").Get<List<int>>();
+        string errorMessage = string.Empty;
+
+        if (string.IsNullOrEmpty(documentNumber))
+        {
+            return new DocumentValidationResult
+            {
+                Error = "Číslo dokladu nemůže být prázdné."
+            };
+        }
 
         try
         {
-            if (documentTypes is null)
-            {
-                logger.LogError("Z konfigurace nelze načíst hodnotu DocumentTypes.");
-                throw new ArgumentException(null, nameof(documentTypes));
-            }
+            var documentTypes = configuration.GetSection("DocumentTypes").Get<List<int>>();
+            ArgumentNullException.ThrowIfNull(documentTypes);
 
             var tasks = new List<Task<DocumentValidationResult>>();
 
-            documentTypes.ForEach(documentType => tasks.Add(ValidateDocumentByDocumentType(documentNumber, documentType, cancellationToken)));
+            documentTypes.ForEach(documentType => tasks.Add(ValidateDocumentByDocumentTypeAsync(documentNumber, documentType, cancellationToken)));
 
             while (tasks.Count > 0)
             {
@@ -38,51 +42,48 @@ internal sealed class DocumentValidateService(HttpClient httpClient, IConfigurat
                     return await completedTask;
                 }
             }
-
-            return new DocumentValidationResult
-            {
-                Number = documentNumber,
-                IsRegistered = false
-            };
+        }
+        catch (ArgumentNullException ex)
+        {
+            logger.LogError(ex.ToString());
+            errorMessage = "Chyba při zpracování požadavku. O problému víme a pracujeme na nápravě.";
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Neočekávaná chyba při ověřování platnosti dokladu.");
-
-            return new DocumentValidationResult
-            {
-                Number = documentNumber,
-                IsRegistered = false,
-                Error = "Neočekávaná chyba. O problému víme a pracujeme na nápravě."
-            };
+            logger.LogError(ex.ToString());
+            errorMessage = "Neočekávaná chyba. O problému víme a pracujeme na nápravě.";
         }
-    }
-       
-    internal async Task<DocumentValidationResult> ValidateDocumentByDocumentType(string number, int type, CancellationToken cancellationToken)
-    {
-        var baseUrlApi = configuration["BaseUrlApiMvcr"];
 
-        if (string.IsNullOrEmpty(baseUrlApi))
+        return new DocumentValidationResult
         {
-            logger.LogError("Z konfigurace nelze načíst hodnotu BaseUrlApiMvcr.");
-            throw new ArgumentException(null, nameof(baseUrlApi));
-        }
+            Number = documentNumber,
+            Error = errorMessage
+        };
+    }
 
-        var requestUri = $"{baseUrlApi}?dotaz={number}&doklad={type}";
+    internal async Task<DocumentValidationResult> ValidateDocumentByDocumentTypeAsync(string number, int type, CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(number);
+
+        var baseUrlApi = configuration["BaseUrlApiMvcr"];
+        ArgumentException.ThrowIfNullOrEmpty(baseUrlApi);
 
         try
         {
+            var requestUri = $"{baseUrlApi}?dotaz={number}&doklad={type}";
+
             var data = await httpClient.GetStringAsync(requestUri, cancellationToken);
             var invalidDocument = DeserializeXmlToInvalidDocument(data) ?? new();
 
             return MapInvalidDocumentToDocumentValidationResult(invalidDocument);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.ToString());
             throw;
         }
     }
-        
+
     internal InvalidDocument DeserializeXmlToInvalidDocument(string xml)
     {
         ArgumentNullException.ThrowIfNull(xml);
@@ -112,7 +113,7 @@ internal sealed class DocumentValidateService(HttpClient httpClient, IConfigurat
             throw;
         }
     }
-        
+
     internal DocumentValidationResult MapInvalidDocumentToDocumentValidationResult(InvalidDocument document)
     {
         ArgumentNullException.ThrowIfNull(document);
@@ -290,4 +291,20 @@ public sealed record DocumentValidationResult
     /// Gets or sets the error message.
     /// </summary>
     public string Error { get; init; } = string.Empty;
+}
+
+/// <summary>
+/// Represents a truth value enumeration in Czech.
+/// </summary>
+public enum TruthValue
+{
+    /// <summary>
+    /// Represents the "yes" truth value.
+    /// </summary>
+    ano,
+
+    /// <summary>
+    /// Represents the "no" truth value.
+    /// </summary>
+    ne
 }
