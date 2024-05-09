@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import './App.css';
+import LoadingMessage from './components/LoadingMessage';
+import ErrorMessage from './components/ErrorMessage';
+import InvalidDocumentDetails from './components/InvalidDocumentDetails/InvalidDocumentDetails';
 
 function App() {
     const [documentValidationResult, setDocumentValidationResult] = useState();
@@ -31,37 +34,19 @@ function App() {
         }
     };
 
-    const contents = loading
-        ? <p><em>Vyhledávání...</em></p>
-        : documentValidationResult === undefined
-            ? <p style={{ color: 'red' }}>{errorMessage}</p>
-            : documentValidationResult.isRegistered
-                ? <>
-                    <p>Doklad s číslem <b>{documentValidationResult.number} byl nalezen</b> v databázi neplatných dokladů.</p>
-                    <div className="table-container">
-                        <table className="table table-striped" aria-labelledby="tabelLabel">
-                            <thead>
-                                <tr>
-                                    <th>Číslo dokladu</th>
-                                    <th>Série</th>
-                                    <th>Typ dokladu</th>
-                                    <th>Neplatný od</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{documentValidationResult.number}</td>
-                                    <td>{documentValidationResult.series}</td>
-                                    <td>{documentValidationResult.type}</td>
-                                    <td>{documentValidationResult.registeredFrom}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </>
-                : documentValidationResult.error !== ""
-                    ? <p style={{ color: 'red' }}>{documentValidationResult.error}</p>
-                    : <p>Doklad s číslem <b>{documentValidationResult.number} nebyl nalezen</b> v databázi neplatných dokladů.</p>;
+    const getValidationResult = () => {
+        if (loading) {
+            return <LoadingMessage />;
+        } else if (documentValidationResult === undefined) {
+            return <ErrorMessage message={errorMessage} />;
+        } else if (documentValidationResult.error !== "") {
+            return <ErrorMessage message={documentValidationResult.error} />;
+        } else if (documentValidationResult.isRegistered) {
+            return <InvalidDocumentDetails details={documentValidationResult} />;
+        } else {
+            return <p>Doklad s číslem <b>{documentValidationResult.number} nebyl nalezen</b> v databázi neplatných dokladů.</p>;
+        }
+    };
 
     return (
         <div>
@@ -78,7 +63,7 @@ function App() {
             <p style={{ marginTop: '22px' }}>Zadejte číslo dokladu (pouze číslice a písmena bez diakritiky)</p>
             <input type="text" maxLength="10" value={documentNumber} onChange={(e) => setDocumentNumber(e.target.value)} placeholder="Číslo dokladu" />
             <button onClick={handleButtonClick}>Vyhledat</button>
-            {contents}
+            {getValidationResult()}
         </div>
     );
 }
