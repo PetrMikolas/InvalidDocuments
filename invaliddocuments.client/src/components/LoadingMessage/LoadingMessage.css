@@ -1,0 +1,18 @@
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.loader {
+    width: 18px;
+    height: auto;
+    margin-right: 8px;
+}
+
+.loading-text {
+    margin: 0;
+    font-size: 16px;
+    font-style: italic;
+}

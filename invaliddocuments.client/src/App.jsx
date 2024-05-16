@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-import LoadingMessage from './components/LoadingMessage';
+import LoadingMessage from './components/LoadingMessage/LoadingMessage';
 import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import InvalidDocumentDetails from './components/InvalidDocumentDetails/InvalidDocumentDetails';
 
@@ -65,7 +65,7 @@ function App() {
             </div>
             <p style={{ marginTop: '22px' }}>Zadejte číslo dokladu (pouze číslice a písmena bez diakritiky)</p>
             <input type="text" maxLength="10" value={documentNumber} onChange={(e) => setDocumentNumber(e.target.value)} placeholder="Číslo dokladu" />
-            <button onClick={handleButtonClick}>Vyhledat</button>
+            <button onClick={handleButtonClick}>Vyhledat</button>            
             {getValidationResult()}
         </div>
     );
