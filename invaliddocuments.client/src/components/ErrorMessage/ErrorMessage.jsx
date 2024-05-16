@@ -1,7 +1,8 @@
+import './ErrorMessage.css';
 import PropTypes from 'prop-types';
 
 function ErrorMessage({ message }) {
-    return <p style={{ color: 'red' }}>{message}</p>;
+    return <p className="error">{message}</p>;
 }
 
 ErrorMessage.propTypes = {

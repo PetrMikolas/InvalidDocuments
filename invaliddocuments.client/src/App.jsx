@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import LoadingMessage from './components/LoadingMessage';
-import ErrorMessage from './components/ErrorMessage';
+import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import InvalidDocumentDetails from './components/InvalidDocumentDetails/InvalidDocumentDetails';
 
 function App() {
@@ -12,6 +12,7 @@ function App() {
 
     const handleButtonClick = async () => {
         setLoading(true);
+        setErrorMessage("");
         setDocumentValidationResult(undefined);
 
         try {
@@ -37,7 +38,9 @@ function App() {
     const getValidationResult = () => {
         if (loading) {
             return <LoadingMessage />;
-        } else if (documentValidationResult === undefined) {
+        } else if (documentValidationResult === undefined && errorMessage === "") {
+            return;
+        } else if (errorMessage !== "") {
             return <ErrorMessage message={errorMessage} />;
         } else if (documentValidationResult.error !== "") {
             return <ErrorMessage message={documentValidationResult.error} />;
