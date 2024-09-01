@@ -30,6 +30,7 @@ app.UseHttpsRedirection();
 
 app.MapFallbackToFile("/index.html");
 
-app.MapEndpointsValidations();
+// Map application endpoints.
+app.MapValidationEndpoints();
 
 app.Run();

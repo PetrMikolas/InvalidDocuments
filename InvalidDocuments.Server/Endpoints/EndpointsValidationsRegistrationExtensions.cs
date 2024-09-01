@@ -14,9 +14,12 @@ public static class EndpointsValidationsRegistrationExtensions
     /// </summary>
     /// <param name="app">The <see cref="WebApplication"/> instance.</param>
     /// <returns>The modified <see cref="WebApplication"/> instance with mapped endpoints.</returns>
-    public static WebApplication MapEndpointsValidations(this WebApplication app)
+    public static WebApplication MapValidationEndpoints(this WebApplication app)
     {
-        app.MapGet("validations", async ([FromQuery] string number, [FromServices] IDocumentValidateService documentValidateService, CancellationToken cancellationToken) =>
+        app.MapGet("validations", async (
+            [FromQuery] string number,
+            [FromServices] IDocumentValidateService documentValidateService,
+            CancellationToken cancellationToken) =>
         {
             number = RemoveWhiteSpace(number);
 
@@ -99,11 +102,13 @@ public static class EndpointsValidationsRegistrationExtensions
         return error == string.Empty;
     }
 
-    internal sealed record DocumentValidationDto(string Number,
-                                                 string Series,
-                                                 string Type,
-                                                 bool IsRegistered,
-                                                 string RegisteredFrom,
-                                                 bool BadRequest,
-                                                 string Error);
+    internal sealed record DocumentValidationDto(
+        string Number,
+        string Series,
+        string Type,
+        bool IsRegistered,
+        string RegisteredFrom,
+        bool BadRequest,
+        string Error
+    );
 }
