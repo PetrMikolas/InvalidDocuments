@@ -1,19 +1,14 @@
 using InvalidDocuments.Server.Endpoints;
+using InvalidDocuments.Server.Sentry;
 using InvalidDocuments.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseSentry(o =>
-{
-    o.Dsn = builder.Configuration["SentryDsn"]!;
-    o.Debug = false;
-    o.TracesSampleRate = 1.0;
-});
+// Add Sentry services to the WebHostBuilder.
+builder.WebHost.AddSentry(builder.Configuration);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
